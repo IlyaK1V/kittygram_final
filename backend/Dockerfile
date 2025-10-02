@@ -1,8 +1,6 @@
 FROM python:3.12
 WORKDIR /app
 
-RUN pip install gunicorn
-
 COPY requirements.txt .
 
 RUN pip install --upgrade pip && \
