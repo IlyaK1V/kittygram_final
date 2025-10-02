@@ -1,26 +1,96 @@
-#  Как работать с репозиторием финального задания
+**Kittygram** — это веб-приложение для публикации и просмотра анкет любимых питомцев.  
+Каждый пользователь может зарегистрироваться, добавить карточки со своими питомцами, указывать достижения и просматривать других котиков.
 
-## Что нужно сделать
+Развёрнутое приложение: [https://kittygram-learning.ru/](https://kittygram-learning.ru/)
 
-Настроить запуск проекта Kittygram в контейнерах и CI/CD с помощью GitHub Actions
+---
 
-## Как проверить работу с помощью автотестов
+## Используемые технологии
 
-В корне репозитория создайте файл tests.yml со следующим содержимым:
-```yaml
-repo_owner: ваш_логин_на_гитхабе
-kittygram_domain: полная ссылка (https://доменное_имя) на ваш проект Kittygram
-taski_domain: полная ссылка (https://доменное_имя) на ваш проект Taski
-dockerhub_username: ваш_логин_на_докерхабе
+### Backend
+- Python 3.12
+- Django
+- Django REST Framework
+- Gunicorn
+- PostgreSQL 13
+
+### Frontend
+- React
+- Node.js 18
+- npm
+
+### Инфраструктура
+- Docker + Docker Compose
+- Nginx
+- GitHub Actions (CI/CD)
+- appleboy actions (scp, ssh, telegram)
+
+---
+
+## Необходимые инструменты
+
+Для локального запуска и деплоя проекта понадобятся:
+- Python 3.12
+- Node.js 18
+- Docker и Docker Compose
+- PostgreSQL (если запускать не в контейнере)
+- Git
+
+---
+
+## Установка и запуск
+
+### 1. Клонировать репозиторий
+```bash
+git clone https://github.com/ilyak475/kittygram_final
+cd kittygram
 ```
 
-Скопируйте содержимое файла `.github/workflows/main.yml` в файл `kittygram_workflow.yml` в корневой директории проекта.
+### 2. Создать .env файл
+```
+POSTGRES_DB=kittygram
+POSTGRES_USER=kittygram_user
+POSTGRES_PASSWORD=kittygram_password
+DB_HOST=db
+DB_PORT=5432
+SECRET_KEY='your_secret_key'
+DEBUG=False
+ALLOWED_HOSTS=localhost,127.0.0.1,kittygram-learning.ru
+EXTERNAL_PORT=8000
+```
+### 3. Запуск в Docker
+```bash
+docker compose -f docker-compose.production.yml up -d
+```
+После запуска будут доступны:
 
-Для локального запуска тестов создайте виртуальное окружение, установите в него зависимости из backend/requirements.txt и запустите в корневой директории проекта `pytest`.
+- Backend (API) — http://localhost:8000/api/
 
-## Чек-лист для проверки перед отправкой задания
+- Frontend — http://localhost:8000/
 
-- Проект Taski доступен по доменному имени, указанному в `tests.yml`.
-- Проект Kittygram доступен по доменному имени, указанному в `tests.yml`.
-- Пуш в ветку main запускает тестирование и деплой Kittygram, а после успешного деплоя вам приходит сообщение в телеграм.
-- В корне проекта есть файл `kittygram_workflow.yml`.
+- Админ-панель Django — http://localhost:8000/admin/
+
+### 4. Применение миграций и сборка статики
+```
+docker compose -f docker-compose.production.yml exec backend python manage.py migrate --noinput
+```
+```
+docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic --noinput
+```
+
+## CI/CD
+
+Проект настроен на автоматическую сборку и деплой через GitHub Actions:
+
+- Запускаются тесты (flake8 и Django tests)
+
+- Собираются образы backend, frontend и gateway и пушатся в Docker Hub
+
+- Выполняется деплой на сервер через ssh и scp
+
+- После успешного деплоя отправляется уведомление в Telegram
+
+Проект выполнен в рамках обучения и практики.
+
+Автор: Кравченко Илья
+GitHub: [IlyaK1V](https://github.com/IlyaK1V/)
