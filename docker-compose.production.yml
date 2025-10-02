@@ -25,6 +25,4 @@ services:
     volumes:
       - static_kittygram:/staticfiles/
     ports:
-      - "${EXTERNAL_PORT}:80"
-    environment:
-      - EXTERNAL_PORT=${EXTERNAL_PORT}
+      - 9000:80
