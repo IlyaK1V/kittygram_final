@@ -1,6 +1,7 @@
 volumes:
   pg_data_kittygram:
   static_kittygram:
+  media_kittygram:
 
 services:
   db:
@@ -13,6 +14,7 @@ services:
     env_file: .env
     volumes:
       - static_kittygram:/backend_static
+      - media_kittygram:/app/media
   frontend:
     image: ilyak475/kittygram_frontend
     env_file: .env
@@ -24,5 +26,6 @@ services:
     env_file: .env
     volumes:
       - static_kittygram:/staticfiles/
+      - media_kittygram:/staticfiles/media/
     ports:
       - "${EXTERNAL_PORT}:80"
